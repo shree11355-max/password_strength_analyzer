@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Password Strength Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 480px;
+      margin: 60px auto;
+      padding: 0 20px;
+      background: #f5f5f5;
+    }
+    h2 { color: #333; }
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 12px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: #4A90D9;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover { background: #357ABD; }
+    #result {
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      display: none;
+    }
+    #details {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #555;
+    }
+    .weak   { background: #fde8e8; color: #c0392b; }
+    .medium { background: #fef9e7; color: #e67e22; }
+    .strong { background: #e9f7ef; color: #27ae60; }
+  </style>
+</head>
+<body>
+  <h2>Password Strength Analyzer</h2>
+  <p>Enter a password to check its strength using an AI model.</p>
+
+  <input type="text" id="password" placeholder="Type your password here...">
+  <button onclick="checkStrength()">Analyze</button>
+
+  <div id="result"></div>
+  <div id="details"></div>
+
+  <script>
+    async function checkStrength() {
+      const password = document.getElementById("password").value;
+      if (!password) {
+        alert("Please enter a password.");
+        return;
+      }
+
+      // Call the Flask backend
+      const response = await fetch("http://localhost:8000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: password })
+      });
+
+      const data = await response.json();
+
+      // Show result
+      const resultDiv  = document.getElementById("result");
+      const detailsDiv = document.getElementById("details");
+
+      resultDiv.style.display = "block";
+      resultDiv.className     = data.strength.toLowerCase();
+      resultDiv.textContent   = "Strength: " + data.strength;
+
+      // Show the extracted features
+      const f = data.features;
+      detailsDiv.innerHTML = `
+        <strong>Features extracted:</strong><br>
+        Length: ${f.length} &nbsp;|&nbsp;
+        Uppercase: ${f.uppercase} &nbsp;|&nbsp;
+        Digits: ${f.digits} &nbsp;|&nbsp;
+        Special chars: ${f.special}
+      `;
+    }
+  </script>
+</body>
+</html>
