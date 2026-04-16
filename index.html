@@ -1,101 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Password Strength Analyzer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 480px;
-      margin: 60px auto;
-      padding: 0 20px;
-      background: #f5f5f5;
-    }
-    h2 { color: #333; }
-    input {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 12px;
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background: #4A90D9;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover { background: #357ABD; }
-    #result {
-      margin-top: 24px;
-      padding: 16px;
-      border-radius: 8px;
-      font-size: 18px;
-      font-weight: bold;
-      text-align: center;
-      display: none;
-    }
-    #details {
-      margin-top: 12px;
-      font-size: 13px;
-      color: #555;
-    }
-    .weak   { background: #fde8e8; color: #c0392b; }
-    .medium { background: #fef9e7; color: #e67e22; }
-    .strong { background: #e9f7ef; color: #27ae60; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Enquiry Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h2>Password Strength Analyzer</h2>
-  <p>Enter a password to check its strength using an AI model.</p>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">College <span class="highlight">AI</span> Assistant</h1>
+                <nav class="nav">
+                    <a href="#" class="nav-link active" data-page="chat">Chat</a>
+                    <a href="#" class="nav-link" data-page="admin">Admin</a>
+                </nav>
+            </div>
+        </header>
 
-  <input type="text" id="password" placeholder="Type your password here...">
-  <button onclick="checkStrength()">Analyze</button>
+        <!-- Chat Page -->
+        <main class="page active" id="chat-page">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span class="status-text">AI Assistant Active</span>
+                    </div>
+                    <button class="clear-chat-btn" id="clearChatBtn">Clear History</button>
+                </div>
 
-  <div id="result"></div>
-  <div id="details"></div>
+                <div class="messages-container" id="messagesContainer">
+                    <div class="message bot-message">
+                        <div class="message-avatar bot-avatar">AI</div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                Hello! I'm your College AI Assistant. I can help you with admissions, courses, fees, campus facilities, and more. What would you like to know?
+                            </div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
 
-  <script>
-    async function checkStrength() {
-      const password = document.getElementById("password").value;
-      if (!password) {
-        alert("Please enter a password.");
-        return;
-      }
+                <div class="quick-questions">
+                    <button class="quick-btn" data-question="What courses are available?">🎓 Available Courses</button>
+                    <button class="quick-btn" data-question="What is the admission process?">📝 Admission Process</button>
+                    <button class="quick-btn" data-question="What are the fees?">💰 Fee Structure</button>
+                    <button class="quick-btn" data-question="Tell me about campus facilities">🏫 Campus Facilities</button>
+                </div>
 
-      // Call the Flask backend
-      const response = await fetch("http://localhost:8000/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: password })
-      });
+                <div class="input-container">
+                    <textarea 
+                        class="message-input" 
+                        id="messageInput" 
+                        placeholder="Type your question here..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
 
-      const data = await response.json();
+        <!-- Admin Page -->
+        <main class="page" id="admin-page">
+            <div class="admin-container">
+                <div class="admin-header">
+                    <h2>FAQ Management</h2>
+                    <button class="add-faq-btn" id="addFaqBtn">+ Add New FAQ</button>
+                </div>
 
-      // Show result
-      const resultDiv  = document.getElementById("result");
-      const detailsDiv = document.getElementById("details");
+                <div class="faq-form" id="faqForm" style="display: none;">
+                    <h3>Add New FAQ</h3>
+                    <div class="form-group">
+                        <label for="faqQuestion">Question</label>
+                        <input type="text" id="faqQuestion" placeholder="Enter the question...">
+                    </div>
+                    <div class="form-group">
+                        <label for="faqAnswer">Answer</label>
+                        <textarea id="faqAnswer" rows="4" placeholder="Enter the answer..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="faqKeywords">Keywords (comma separated)</label>
+                        <input type="text" id="faqKeywords" placeholder="e.g., admission, fees, course">
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-secondary" id="cancelFaqBtn">Cancel</button>
+                        <button class="btn-primary" id="saveFaqBtn">Save FAQ</button>
+                    </div>
+                </div>
 
-      resultDiv.style.display = "block";
-      resultDiv.className     = data.strength.toLowerCase();
-      resultDiv.textContent   = "Strength: " + data.strength;
+                <div class="faq-list" id="faqList">
+                    <!-- FAQ items will be dynamically added here -->
+                </div>
+            </div>
+        </main>
+    </div>
 
-      // Show the extracted features
-      const f = data.features;
-      detailsDiv.innerHTML = `
-        <strong>Features extracted:</strong><br>
-        Length: ${f.length} &nbsp;|&nbsp;
-        Uppercase: ${f.uppercase} &nbsp;|&nbsp;
-        Digits: ${f.digits} &nbsp;|&nbsp;
-        Special chars: ${f.special}
-      `;
-    }
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
